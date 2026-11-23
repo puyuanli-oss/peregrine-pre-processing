@@ -77,18 +77,18 @@ def gtf_to_tables(gtf, directory):
 
 def prepare_annotations(root, gtf=None, download=True, force=False, use_panther=False):
     root = Path(root)
-    inputs = root / 'preprocessed' / 'annotations'
+    inputs = root / 'data' / 'processed' / 'annotations'
     if gtf is None:
-        gtf = root / 'preprocessed' / 'sources' / 'Homo_sapiens.GRCh37.87.gtf.gz'
+        gtf = root / 'data' / 'processed' / 'sources' / 'Homo_sapiens.GRCh37.87.gtf.gz'
         if download:
             fetch_gtf(gtf, force=force)
         elif not gtf.exists():
             raise FileNotFoundError(f'Provide --gtf or download the GRCh37 GTF: {gtf}')
     genes, exons = gtf_to_tables(gtf, inputs)
     outputs = {
-        'promoters': root / 'preprocessed' / 'promoters_600bp.bed',
-        'exons': root / 'eQTL' / 'exons_genes.txt',
-        'tss': root / 'tad' / 'TSSgenesbed',
+        'promoters': root / 'data' / 'processed' / 'promoters_600bp.bed',
+        'exons': root / 'data' / 'processed' / 'annotations' / 'exons_genes.txt',
+        'tss': root / 'data' / 'processed' / 'annotations' / 'TSSgenesbed',
     }
     generate_promoter_bed(genes, outputs['promoters'], panther_list=root / 'pantherGeneList.txt' if use_panther else None)
     process_exons(exons, outputs['exons'])
@@ -101,10 +101,10 @@ def prepare_annotations(root, gtf=None, download=True, force=False, use_panther=
 
 def prepare_eqtl(root):
     root = Path(root)
-    files = sorted((root / 'eQTL' / 'GTEx_Analysis_v7_eQTL').glob('*signif_variant_gene_pairs.txt.gz'))
+    files = sorted((root / 'data' / 'raw' / 'gtex' / 'GTEx_Analysis_v7_eQTL').glob('*signif_variant_gene_pairs.txt.gz'))
     if not files:
         raise FileNotFoundError('No GTEx significant variant-gene pairs found')
-    outdir = root / 'preprocessed' / 'eqtl'
+    outdir = root / 'data' / 'processed' / 'eqtl'
     for file in files:
         eqtl_to_bedlike(file, outdir / (file.name[:-7] + '.bed'), tissue=file.name.split('.signif_')[0])
     return len(files)
@@ -112,10 +112,10 @@ def prepare_eqtl(root):
 
 def prepare_tad(root):
     root = Path(root)
-    files = sorted((root / 'tad').glob('ENCFF*.bed'))
+    files = sorted((root / 'data' / 'raw' / 'encode').glob('ENCFF*.bed'))
     if not files:
         raise FileNotFoundError('No ENCODE domain BED files found')
-    outdir = root / 'preprocessed' / 'tad'
+    outdir = root / 'data' / 'processed' / 'tad'
     for file in files:
         format_domain_bed(file, outdir / file.name)
     return len(files)

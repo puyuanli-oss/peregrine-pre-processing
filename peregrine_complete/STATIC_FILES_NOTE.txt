@@ -1,4 +1,0 @@
-Place these biocurated files in the repository root before running:
-- CREbedDBenhancers_10092018 (large; not included in this zip)
-- pantherGeneList.txt (included)
-- tissuetable_10092018.txt (included)

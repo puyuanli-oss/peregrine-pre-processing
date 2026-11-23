@@ -62,5 +62,4 @@ def run_all_checks(repo_root: Path):
     check_python_version()
     check_commands()
     check_packages()
-    check_static_inputs(repo_root)
     print("All environment checks passed.")

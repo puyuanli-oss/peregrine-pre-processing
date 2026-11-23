@@ -32,11 +32,11 @@ def cmd_download(args):
     root = repo_root()
     steps = set(args.steps.split(",")) if args.steps else {"gtex", "psychic", "encode"}
     if "gtex" in steps:
-        download_gtex_v7(root / "eQTL", force=args.force)
+        download_gtex_v7(root / "data" / "raw" / "gtex", force=args.force)
     if "psychic" in steps:
-        download_psychic(root / "heirarchicalTAD" / "data", force=args.force)
+        download_psychic(root / "data" / "raw" / "psychic", force=args.force)
     if "encode" in steps:
-        download_encode_domains(root / "tad", force=args.force)
+        download_encode_domains(root / "data" / "raw" / "encode", force=args.force)
 
 
 def cmd_annotations(args):
@@ -92,7 +92,7 @@ def cmd_all(args):
     if not args.offline:
         cmd_download(args)
     if 'psychic' in steps:
-        data_dir = root / 'heirarchicalTAD' / 'data'
+        data_dir = root / 'data' / 'raw' / 'psychic'
         beds = list(data_dir.glob('*.bed')) if data_dir.exists() else []
         if not beds:
             raise FileNotFoundError('No PSYCHIC BED files; download or supply them')
